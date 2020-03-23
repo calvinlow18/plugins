@@ -43,6 +43,12 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
       case 'onPageStarted':
         _platformCallbacksHandler.onPageStarted(call.arguments['url']);
         return null;
+      case 'onScroll':
+        _platformCallbacksHandler.onScroll(
+          call.arguments['x'],
+          call.arguments['y'],
+        );
+        return null;
     }
     throw MissingPluginException(
         '${call.method} was invoked but has no handler');

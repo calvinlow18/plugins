@@ -79,6 +79,10 @@ typedef void PageStartedCallback(String url);
 /// Signature for when a [WebView] has finished loading a page.
 typedef void PageFinishedCallback(String url);
 
+typedef void ScrollXCallback(int x);
+
+typedef void ScrollYCallback(int y);
+
 /// Specifies possible restrictions on automatic media playback.
 ///
 /// This is typically used in [WebView.initialMediaPlaybackPolicy].
@@ -152,6 +156,8 @@ class WebView extends StatefulWidget {
     this.userAgent,
     this.initialMediaPlaybackPolicy =
         AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
+    this.onScrollX,
+    this.onScrollY,
   })  : assert(javascriptMode != null),
         assert(initialMediaPlaybackPolicy != null),
         super(key: key);
@@ -318,6 +324,10 @@ class WebView extends StatefulWidget {
   ///
   /// The default policy is [AutoMediaPlaybackPolicy.require_user_action_for_all_media_types].
   final AutoMediaPlaybackPolicy initialMediaPlaybackPolicy;
+
+  final ScrollXCallback onScrollX;
+
+  final ScrollYCallback onScrollY;
 
   @override
   State<StatefulWidget> createState() => _WebViewState();
@@ -489,6 +499,16 @@ class _PlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
     }
     for (JavascriptChannel channel in channels) {
       _javascriptChannels[channel.name] = channel;
+    }
+  }
+
+  @override
+  void onScroll(int x, int y) {
+    if (_widget.onScrollX != null) {
+      _widget.onScrollX(x);
+    }
+    if (_widget.onScrollY != null) {
+      _widget.onScrollX(y);
     }
   }
 }
