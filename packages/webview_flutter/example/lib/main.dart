@@ -75,6 +75,8 @@ class _WebViewExampleState extends State<WebViewExample> {
             print('Page finished loading: $url');
           },
           gestureNavigationEnabled: true,
+          onScrollX: print,
+          onScrollY: print,
         );
       }),
       floatingActionButton: favoriteButton(),

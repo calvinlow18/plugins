@@ -21,6 +21,7 @@ import io.flutter.plugin.platform.PlatformView;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 public class FlutterWebView implements PlatformView, MethodCallHandler {
   private static final String JS_CHANNEL_NAMES_FIELD = "javascriptChannelNames";
@@ -29,7 +30,7 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
   private final FlutterWebViewClient flutterWebViewClient;
   private final Handler platformThreadHandler;
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+  @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.M)
   @SuppressWarnings("unchecked")
   FlutterWebView(
       final Context context,
@@ -69,6 +70,16 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
       String url = (String) params.get("initialUrl");
       webView.loadUrl(url);
     }
+
+    webView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+      @Override
+      public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x", scrollX);
+        args.put("y", scrollY);
+        methodChannel.invokeMethod("onScroll", args);
+      }
+    });
   }
 
   @Override
